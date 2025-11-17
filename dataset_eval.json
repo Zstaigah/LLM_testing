@@ -1,0 +1,52 @@
+[
+  {
+    "instruction": "What is a DLL injection attack?",
+    "input": "",
+    "output": "Attack technique forcing a process to load malicious DLL. Methods: CreateRemoteThread, reflective injection, process hollowing. Used for privilege escalation, evasion, hooking. MITRE ATT&CK: T1055.001. Defense: monitor loaded modules, restrict write access to System32."
+  },
+  {
+    "instruction": "Analyze this failed login pattern",
+    "input": "EventID 4625 × 50 from IP 203.0.113.45, targeting accounts: admin, administrator, root, test, guest",
+    "output": "Brute force attack. Common username enumeration list. Action: block 203.0.113.45, enable account lockout policy, alert SOC. Check if any attempts succeeded (EventID 4624). Review firewall rules for external auth access."
+  },
+  {
+    "instruction": "Explain Windows Event ID 4672",
+    "input": "",
+    "output": "Special privileges assigned to new logon. Fires when account with admin rights logs in. Key for detecting privilege escalation and lateral movement. Normal for domain admins, suspicious for regular users. Correlate with EventID 4624 for context."
+  },
+  {
+    "instruction": "Detect malicious macro execution",
+    "input": "Process: WINWORD.EXE spawned child powershell.exe -w hidden -enc <base64>",
+    "output": "Malicious macro detected. Word spawning hidden PowerShell with encoded command is classic malware delivery. Action: kill processes, quarantine document, analyze base64 payload, check for persistence/C2 callbacks."
+  },
+  {
+    "instruction": "What is token theft?",
+    "input": "",
+    "output": "Stealing Windows access tokens to impersonate users without credentials. Tokens cached in LSASS. Tools: Invoke-TokenManipulation, Incognito. Requires admin or SeImpersonate. MITRE ATT&CK: T1134. Defense: Protected Process Light for LSASS."
+  },
+  {
+    "instruction": "Perform domain enumeration with BloodHound",
+    "input": "",
+    "output": "1. Run SharpHound collector on domain-joined host\n2. Collect: sessions, ACLs, group memberships, trusts\n3. Import JSON to BloodHound GUI\n4. Query: 'Shortest path to Domain Admins'\n5. Identify attack paths (Kerberoasting, constrained delegation)\nMITRE ATT&CK: T1087.002"
+  },
+  {
+    "instruction": "Analyze suspicious SMB traffic",
+    "input": "Source: 192.168.10.50, Destinations: 30 hosts on port 445, Duration: 5 minutes",
+    "output": "Lateral movement via SMB. Possible worm/ransomware spreading or attacker pivoting. Check: authentication method (pass-the-hash?), file transfers, service installations. Correlate with process creation on targets (EventID 4688)."
+  },
+  {
+    "instruction": "What is defense evasion?",
+    "input": "",
+    "output": "MITRE ATT&CK tactic (TA0005) covering techniques to avoid detection. Examples: disabling AV, clearing logs, process injection, obfuscation, rootkits, timestomping. Requires behavioral detection vs signature-based."
+  },
+  {
+    "instruction": "Create Suricata rule for detecting Metasploit reverse shell",
+    "input": "",
+    "output": "```\nalert tcp any any -> $HOME_NET any (msg:\"Metasploit Reverse Shell\"; content:\"|6d 65 74 65 72 70 72 65 74 65 72|\"; flow:established,from_server; classtype:trojan-activity; sid:1000001; rev:1;)\n```"
+  },
+  {
+    "instruction": "Respond to Active Directory compromise",
+    "input": "Attacker has domain admin credentials",
+    "output": "1. Assume full compromise - all passwords/hashes burned\n2. Reset KRBTGT twice (24hr apart)\n3. Force password reset for ALL privileged accounts\n4. Rebuild domain controllers if persistence suspected\n5. Hunt for: Golden Tickets, skeleton keys, DCShadow\n6. Review all GPOs, ACLs, schema changes\n7. Segment network during recovery"
+  }
+]
